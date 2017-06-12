@@ -11,7 +11,6 @@
 const sj = require('swearjar');
 
 module.exports = function (robot) {
-    let name = "";
     let swearJarInfo = {};
 
     let categories = {
@@ -30,7 +29,7 @@ module.exports = function (robot) {
     // Checks every message sent for swear words and updates the swear jar
     robot.hear(/(.*)/i, function (msg) {
         let message = msg.match[1].split(" ");
-        name = msg.message.user.name.toLowerCase();
+        let name = msg.message.user.name.toLowerCase();
 
         // Checks each message for profanity
         if (sj.profane(message)) {
@@ -53,13 +52,10 @@ module.exports = function (robot) {
             });
 
             // Handles the case where the amount owed isn't an integer and adds an extra '0' to the output string
-            let moneyOwedMsg = moneyOwed;
-            if (!Number.isInteger(moneyOwed)) {
-                moneyOwedMsg = moneyOwedMsg + "0";
-            }
+            let moneyOwedMsg = formatMessage(moneyOwed);
 
             // Alerts the user how much that message just cost them
-            msg.send("That's $" + moneyOwedMsg + " that you're putting in the swear jar, @" + name);
+            msg.send("That's $" + moneyOwedMsg + " that you're putting in the swear jar, @" + name + ".");
 
             // Makes sure the user has been entered into the swear jar before
             checkUser(name);
@@ -75,34 +71,43 @@ module.exports = function (robot) {
     // Lists stats for specified user or global leaderboard if no user specified
     robot.respond(/swear jar (.*)|swear jar/i, function (msg) {
         // Retrieves name from message
-        if (msg.match[1]) {
-            name = msg.match[1].toLowerCase();
-        }
+        let name = msg.match[1];
 
         // Check for the existence of a specified username, otherwise print global leaderboard
         if (name) {
             checkUser(name);
 
             let moneyOwed = swearJarInfo[name];
-            let moneyOwedMsg = moneyOwed;
-            if (!Number.isInteger(moneyOwed)) {
-                moneyOwedMsg = moneyOwedMsg + "0";
-            }
+            let moneyOwedMsg = formatMessage(moneyOwed);
 
             // Print out user stats
-            msg.send("@" + name + " total owed: $" + moneyOwedMsg);
+            msg.send("@" + name + " owes: $" + moneyOwedMsg + ".");
         } else {
             for (let user in swearJarInfo) {
                 if (Object.prototype.hasOwnProperty.call(swearJarInfo, user)) {
-                    let moneyOwedMsg = swearJarInfo[user];
-                    if (!Number.isInteger(moneyOwedMsg)) {
-                        moneyOwedMsg = moneyOwedMsg + "0";
-                    }
+                    let moneyOwed = swearJarInfo[user];
+                    let moneyOwedMsg = formatMessage(moneyOwed);
                     msg.send("@" + user + " owes $" + moneyOwedMsg + "\n");
                 }
             }
         }
     });
+
+    /**
+     * Formats the money owed amount to end in a zero (if not an integer) and
+     * to print with commas every thousand.
+     * @param moneyOwed The amount that's owed and needs to be formatted
+     * @returns {String} moneyOwedMsg The formatted string to print
+     */
+    function formatMessage(moneyOwed) {
+        let moneyOwedMsg = moneyOwed;
+        if (!Number.isInteger(moneyOwed)) {
+            moneyOwedMsg = moneyOwedMsg + "0";
+        }
+        moneyOwedMsg = moneyOwedMsg.toLocaleString();
+
+        return moneyOwedMsg;
+    }
 
     /**
      * Checks if user has sworn before. If not, create stats for user.
