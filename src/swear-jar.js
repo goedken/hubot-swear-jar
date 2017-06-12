@@ -52,8 +52,14 @@ module.exports = function (robot) {
                 }
             });
 
+            // Handles the case where the amount owed isn't an integer and adds an extra '0' to the output string
+            let moneyOwedMsg = moneyOwed;
+            if (!Number.isInteger(moneyOwed)) {
+                moneyOwedMsg = moneyOwedMsg + "0";
+            }
+
             // Alerts the user how much that message just cost them
-            msg.send("That's $" + moneyOwed + " that you're putting in the swear jar, @" + name);
+            msg.send("That's $" + moneyOwedMsg + " that you're putting in the swear jar, @" + name);
 
             // Makes sure the user has been entered into the swear jar before
             checkUser(name);
