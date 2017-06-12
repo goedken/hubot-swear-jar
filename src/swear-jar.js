@@ -83,12 +83,22 @@ module.exports = function (robot) {
         if (name) {
             checkUser(name);
 
+            let moneyOwed = swearJarInfo[name];
+            let moneyOwedMsg = moneyOwed;
+            if (!Number.isInteger(moneyOwed)) {
+                moneyOwedMsg = moneyOwedMsg + "0";
+            }
+
             // Print out user stats
-            msg.send("@" + name + " total owed: " + swearJarInfo[name]);
+            msg.send("@" + name + " total owed: $" + moneyOwedMsg);
         } else {
             for (let user in swearJarInfo) {
                 if (Object.prototype.hasOwnProperty.call(swearJarInfo, user)) {
-                    msg.send("@" + user + " owes " + swearJarInfo[user] + "\n");
+                    let moneyOwedMsg = swearJarInfo[user];
+                    if (!Number.isInteger(moneyOwedMsg)) {
+                        moneyOwedMsg = moneyOwedMsg + "0";
+                    }
+                    msg.send("@" + user + " owes $" + moneyOwedMsg + "\n");
                 }
             }
         }
