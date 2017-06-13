@@ -57,7 +57,7 @@ module.exports = function (robot) {
             msg.send('That\'s $' + moneyOwedMsg + ' that you\'re putting in the swear jar, @' + name + '.');
 
             // Makes sure the user has been entered into the swear jar before
-            checkUser(name);
+            checkUserInSwearJar(name);
 
             // Updates the ongoing amount owed
             swearJarInfo[name] += moneyOwed;
@@ -72,13 +72,16 @@ module.exports = function (robot) {
         // Retrieves name from message
         let name = msg.match[1];
 
-        // Check for the existence of a specified username, otherwise print global leaderboard
-        if (name) {
-            if (name.charAt(0) === '@') {
-                name = name.substring(1);
-            }
+        if (name && name.charAt(0) === '@') {
+            name = name.substring(1);
+        }
 
-            checkUser(name);
+        // Check for the existence of a specified username, otherwise print global leaderboard
+        if (name && !checkUserInRoom(name)) {
+            msg.send('Sorry, that user doesn\'t exist!');
+        } else if (name && checkUserInRoom(name)) {
+
+            checkUserInSwearJar(name);
 
             let moneyOwed = swearJarInfo[name];
             let moneyOwedMsg = formatMessage(moneyOwed);
@@ -95,6 +98,24 @@ module.exports = function (robot) {
             }
         }
     });
+
+    /**
+     * Checks if the user specified is a valid user in the given room.
+     * @param {string} name The name of the user.
+     * @returns {boolean} True if valid user, false otherwise.
+     */
+    function checkUserInRoom(name) {
+        if(robot.brain.data.users) {
+            for (let user in robot.brain.data.users) {
+                if (Object.prototype.hasOwnProperty.call(robot.brain.data.users, user)) {
+                    if (name.toLowerCase() === robot.brain.data.users[user].name.toLowerCase()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
 
     /**
      * Formats the money owed amount to end in a zero (if not an integer) and
@@ -116,7 +137,7 @@ module.exports = function (robot) {
      * Checks if user has sworn before. If not, create stats for user.
      * @param {String} name The name of the user to check
      */
-    function checkUser(name) {
+    function checkUserInSwearJar(name) {
         if (!swearJarInfo[name]) {
             swearJarInfo[name] = 0;
         }
