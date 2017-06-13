@@ -80,7 +80,6 @@ module.exports = function (robot) {
         if (name && !checkUserInRoom(name)) {
             msg.send('Sorry, that user doesn\'t exist!');
         } else if (name && checkUserInRoom(name)) {
-
             checkUserInSwearJar(name);
 
             let moneyOwed = swearJarInfo[name];
@@ -105,7 +104,7 @@ module.exports = function (robot) {
      * @returns {boolean} True if valid user, false otherwise.
      */
     function checkUserInRoom(name) {
-        if(robot.brain.data.users) {
+        if (robot.brain.data.users) {
             for (let user in robot.brain.data.users) {
                 if (Object.prototype.hasOwnProperty.call(robot.brain.data.users, user)) {
                     if (name.toLowerCase() === robot.brain.data.users[user].name.toLowerCase()) {
