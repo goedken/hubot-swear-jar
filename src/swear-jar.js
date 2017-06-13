@@ -72,12 +72,12 @@ module.exports = function (robot) {
         // Retrieves name from message
         let name = msg.match[1];
 
-        if (name.charAt(0) === '@') {
-            name = name.substring(1);
-        }
-
         // Check for the existence of a specified username, otherwise print global leaderboard
         if (name) {
+            if (name.charAt(0) === '@') {
+                name = name.substring(1);
+            }
+
             checkUser(name);
 
             let moneyOwed = swearJarInfo[name];
@@ -90,7 +90,7 @@ module.exports = function (robot) {
                 if (Object.prototype.hasOwnProperty.call(swearJarInfo, user)) {
                     let moneyOwed = swearJarInfo[user];
                     let moneyOwedMsg = formatMessage(moneyOwed);
-                    msg.send('@' + user + ' owes $' + moneyOwedMsg + '\n');
+                    msg.send('@' + user + ' owes $' + moneyOwedMsg + '.');
                 }
             }
         }
