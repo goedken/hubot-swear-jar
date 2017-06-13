@@ -14,11 +14,11 @@ module.exports = function (robot) {
     let swearJarInfo = {};
 
     let categories = {
-        'insult': 1,
-        'sexual': 2,
-        'discriminatory': 2,
-        'inappropriate': 0.5,
-        'blasphemy': 0.5
+        'insult'         : 1,
+        'sexual'         : 2,
+        'discriminatory' : 2,
+        'inappropriate'  : 0.5,
+        'blasphemy'      : 0.5,
     };
 
     // Retrieve swear jar information from the robot brain
@@ -28,7 +28,7 @@ module.exports = function (robot) {
 
     // Checks every message sent for swear words and updates the swear jar
     robot.hear(/(.*)/i, function (msg) {
-        let message = msg.match[1].split(" ");
+        let message = msg.match[1].split(' ');
         let name = msg.message.user.name.toLowerCase();
 
         // Checks each message for profanity
@@ -55,7 +55,7 @@ module.exports = function (robot) {
             let moneyOwedMsg = formatMessage(moneyOwed);
 
             // Alerts the user how much that message just cost them
-            msg.send("That's $" + moneyOwedMsg + " that you're putting in the swear jar, @" + name + ".");
+            msg.send('That\'s $' + moneyOwedMsg + ' that you\'re putting in the swear jar, @' + name + '.');
 
             // Makes sure the user has been entered into the swear jar before
             checkUser(name);
@@ -81,13 +81,13 @@ module.exports = function (robot) {
             let moneyOwedMsg = formatMessage(moneyOwed);
 
             // Print out user stats
-            msg.send("@" + name + " owes: $" + moneyOwedMsg + ".");
+            msg.send('@' + name + ' owes: $' + moneyOwedMsg + '.');
         } else {
             for (let user in swearJarInfo) {
                 if (Object.prototype.hasOwnProperty.call(swearJarInfo, user)) {
                     let moneyOwed = swearJarInfo[user];
                     let moneyOwedMsg = formatMessage(moneyOwed);
-                    msg.send("@" + user + " owes $" + moneyOwedMsg + "\n");
+                    msg.send('@' + user + ' owes $' + moneyOwedMsg + '\n');
                 }
             }
         }
@@ -102,7 +102,7 @@ module.exports = function (robot) {
     function formatMessage(moneyOwed) {
         let moneyOwedMsg = moneyOwed;
         if (!Number.isInteger(moneyOwed)) {
-            moneyOwedMsg = moneyOwedMsg + "0";
+            moneyOwedMsg = moneyOwedMsg + '0';
         }
         moneyOwedMsg = moneyOwedMsg.toLocaleString();
 
