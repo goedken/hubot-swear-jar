@@ -33,7 +33,6 @@ module.exports = function (robot) {
 
         // Checks each message for profanity
         if (sj.profane(message)) {
-
             // If profane, generates a sum of dollars to owe based on entire message
             let moneyOwed = 0;
             message.forEach(function (word) {
@@ -96,7 +95,7 @@ module.exports = function (robot) {
     /**
      * Formats the money owed amount to end in a zero (if not an integer) and
      * to print with commas every thousand.
-     * @param moneyOwed The amount that's owed and needs to be formatted
+     * @param {number} moneyOwed The amount that's owed and needs to be formatted
      * @returns {String} moneyOwedMsg The formatted string to print
      */
     function formatMessage(moneyOwed) {

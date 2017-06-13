@@ -39,7 +39,6 @@
   },
   "main": "index.coffee",
   "scripts": {
-    "pretest": "eslint 'src/swear-jar.js'",
-    "test": "grunt test"
+    "pretest": "eslint 'src/swear-jar.js'"
   }
 }

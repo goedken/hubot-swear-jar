@@ -1,13 +1,15 @@
 module.exports = {
     "env" : {
-        "es6"     : true
+        "es6"     : true,
+        "jquery"  : true,
+        "mocha"   : true,
+        "node"    : true
     },
     "extends" : [
         "google"
     ],
     "rules" : {
         "camelcase" : "off",
-        "guard-for-in" : "off",
         "indent": [
             "error", 4, {
                 "SwitchCase"          : 1,
@@ -38,7 +40,11 @@ module.exports = {
                 "tabWidth"               : 4
             }
         ],
-        "new-cap" : "off",
+        "new-cap" : [
+            "error", {
+                "capIsNew" : false
+            }
+        ],
         "no-multi-spaces" : [
             "error", {
                 "exceptions" : {
@@ -49,19 +55,17 @@ module.exports = {
         "object-curly-spacing" : [
             "error", "always"
         ],
-        "padded-blocks" : "off",
-        "require-jsdoc" : "off",
         "space-before-function-paren" : [
             "error", {
                 "anonymous" : "always",
                 "named"     : "never"
             }
         ],
-        "spaced-comment": [
-            "error", "always", {
-                "exceptions": ["-", "+"]
+        "valid-jsdoc" : [
+            "warn", {
+                "requireReturn"     : false,
+                "requireReturnType" : false
             }
-        ],
-        "valid-jsdoc" : "off"
+        ]
     }
 };
