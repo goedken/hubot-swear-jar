@@ -72,6 +72,10 @@ module.exports = function (robot) {
         // Retrieves name from message
         let name = msg.match[1];
 
+        if (name.charAt(0) === '@') {
+            name = name.substring(1);
+        }
+
         // Check for the existence of a specified username, otherwise print global leaderboard
         if (name) {
             checkUser(name);
@@ -80,7 +84,7 @@ module.exports = function (robot) {
             let moneyOwedMsg = formatMessage(moneyOwed);
 
             // Print out user stats
-            msg.send('@' + name + ' owes: $' + moneyOwedMsg + '.');
+            msg.send('@' + name + ' owes $' + moneyOwedMsg + '.');
         } else {
             for (let user in swearJarInfo) {
                 if (Object.prototype.hasOwnProperty.call(swearJarInfo, user)) {
