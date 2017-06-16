@@ -11,17 +11,16 @@
 const swearjar = require('swearjar');
 
 module.exports = function (robot) {
-
     const whitelist = [
-        'giphy'
+        'giphy',
     ];
 
     const categories = {
-        'insult': 1,
-        'sexual': 2,
-        'discriminatory': 2,
-        'inappropriate': 0.5,
-        'blasphemy': 0.5,
+        'insult'         : 1,
+        'sexual'         : 2,
+        'discriminatory' : 2,
+        'inappropriate'  : 0.5,
+        'blasphemy'      : 0.5,
     };
 
     // Retrieve swear jar information from the robot brain
@@ -42,7 +41,6 @@ module.exports = function (robot) {
         // If profane, generates a sum of dollars to owe based on entire message
         let moneyOwed = 0;
         wordsInMessage.forEach(function (word) {
-
             if (!swearjar.profane(word)) return;
             // Checks each word for profanity
             // Gets back each category and generates an amount owed for this specific word
@@ -55,7 +53,7 @@ module.exports = function (robot) {
         });
 
         // Handles the case where the amount owed isn't an integer and adds an extra '0' to the output string
-        let moneyOwedMsg = moneyOwed.toLocaleString(undefined, {style: 'currency', currency: 'USD'});
+        let moneyOwedMsg = moneyOwed.toLocaleString(undefined, { style : 'currency', currency : 'USD' });
 
         // Alerts the user how much that message just cost them
         msg.send(`That's ${moneyOwedMsg} that you're putting in the swear jar, @${name}.`);
@@ -89,7 +87,7 @@ module.exports = function (robot) {
             checkUserInSwearJar(name);
 
             let moneyOwed = swearJarInfo[name];
-            let moneyOwedMsg = moneyOwed.toLocaleString(undefined, {style: 'currency', currency: 'USD'});
+            let moneyOwedMsg = moneyOwed.toLocaleString(undefined, { style : 'currency', currency : 'USD' });
 
             // Print out user stats
             msg.send(`@${name} owes ${moneyOwedMsg}.`);
@@ -105,24 +103,23 @@ module.exports = function (robot) {
             if (!swearJarJSON.hasOwnProperty(user)) continue;
 
             swearJarArray.push({
-                user : user,
-                moneyOwed : swearJarJSON[user]
+                user      : user,
+                moneyOwed : swearJarJSON[user],
             });
         }
 
-        swearJarArray.sort((a,b) => (b.moneyOwed - a.moneyOwed));
+        swearJarArray.sort((a, b) => (b.moneyOwed - a.moneyOwed));
 
         for (let i = 0; i < swearJarArray.length; i++) {
             let userObj = swearJarArray[i];
-            let moneyOwedMsg = userObj.moneyOwed.toLocaleString(undefined, {style: 'currency', currency: 'USD'});
+            let moneyOwedMsg = userObj.moneyOwed.toLocaleString(undefined, { style : 'currency', currency : 'USD' });
 
             scoreboard.push(`${i + 1}. ${userObj.user} ${moneyOwedMsg}`);
         }
 
         let messageText = scoreboard.join('\n');
 
-        msg.send({ "attachments" : [{ "text" : messageText }] });
-
+        msg.send({ 'attachments' : [{ 'text' : messageText }] });
     });
 
     /**
@@ -141,7 +138,6 @@ module.exports = function (robot) {
             }
         }
         return false;
-
     }
 
     /**
@@ -149,7 +145,6 @@ module.exports = function (robot) {
      * @param {String} name The name of the user to check
      */
     function checkUserInSwearJar(name) {
-
         swearJarInfo[name] = swearJarInfo[name] || 0;
         robot.brain.set('swearJarInfo', swearJarInfo);
     }
