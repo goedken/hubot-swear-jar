@@ -9,6 +9,7 @@
 //   agoedken
 
 const swearjar = require('swearjar');
+const REDIS_KEY = 'swearJarInfo';
 
 module.exports = function (robot) {
     const whitelist = [
@@ -28,7 +29,7 @@ module.exports = function (robot) {
     //     swearJarInfo = robot.brain.get('swearJarInfo');
     // }
 
-    let swearJarInfo = robot.brain.get('swearJarInfo') || {};
+    let swearJarInfo = getSwearJarInfo();
 
     // Checks every message sent for swear words and updates the swear jar
     robot.hear(/(.*)/i, function (msg) {
@@ -61,11 +62,14 @@ module.exports = function (robot) {
         // Makes sure the user has been entered into the swear jar before
         checkUserInSwearJar(name);
 
+        // Pull the most recent swear jar info
+        swearJarInfo = getSwearJarInfo();
+
         // Updates the ongoing amount owed
         swearJarInfo[name] += moneyOwed;
 
         // Saves to brain for persistence
-        robot.brain.set('swearJarInfo', swearJarInfo);
+        setSwearJarInfo(swearJarInfo);
     });
 
     // Lists stats for specified user or global leaderboard if no user specified
@@ -77,6 +81,7 @@ module.exports = function (robot) {
             name = name.substring(1);
         }
 
+        swearJarInfo = getSwearJarInfo();
         // Check for the existence of a specified username, otherwise print global leaderboard
         if (name) {
             if (!checkUserInRoom(name) && !whitelist.includes(name)) {
@@ -123,6 +128,28 @@ module.exports = function (robot) {
     });
 
     /**
+     * Get info from the redis brain.
+     * @return  {Object}    Swear jar info object
+     */
+    function getSwearJarInfo() {
+        if (!robot.brain.get(REDIS_KEY)) {
+            return {};
+        }
+        return robot.brain.get(REDIS_KEY);
+    }
+
+    /**
+     * Set the swear jar info in redis brain.
+     * @param   {Object}    swearJarInfo    Swear jar info object
+     */
+    function setSwearJarInfo(swearJarInfo) {
+        if (!swearJarInfo) {
+            return;
+        }
+        return robot.brain.set(REDIS_KEY, swearJarInfo);
+    }
+
+    /**
      * Checks if the user specified is a valid user in the given room.
      * @param {string} name The name of the user.
      * @returns {boolean} True if valid user, false otherwise.
@@ -145,6 +172,7 @@ module.exports = function (robot) {
      * @param {String} name The name of the user to check
      */
     function checkUserInSwearJar(name) {
+        swearJarInfo = getSwearJarInfo();
         swearJarInfo[name] = swearJarInfo[name] || 0;
         robot.brain.set('swearJarInfo', swearJarInfo);
     }
